@@ -3,6 +3,7 @@ let express = require('express');
 let bodyParser = require('body-parser');
 let ejs = require('ejs');
 let mongoose = require('mongoose');
+let encrypt = require('mongoose-encryption');
 
 let app = express();
 app.use(express.static("public"));
@@ -12,11 +13,15 @@ app.use(bodyParser.urlencoded({
 }));
 
 mongoose.connect('mongodb://localhost:27017/userDB');
-
-let userSchema = {
+// creating pure mongoose Schema
+let userSchema = new mongoose.Schema ({
 	email: String,
 	password: String
-}
+});
+
+const secret = "Thisisoursecretkey.";// creating a secret key
+userSchema.plugin(encrypt, { secret: secret, encryptedFields: ['password'] } ); 
+//activating encrypt plugin to schema
 
 let userModal = new mongoose.model("User", userSchema); 
 
@@ -42,6 +47,7 @@ app.post('/register', function(req, res){
 		}
 		else{
 			res.render("secrets");
+			console.log(newUser);
 		}
 	});
 });
