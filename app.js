@@ -1,5 +1,5 @@
 //jshint esversion:6
-require("dotenv").config();// env variable file require
+let dotenv = require("dotenv").config({path:'.env'});// env variable file require
 let express = require('express');
 let bodyParser = require('body-parser');
 let ejs = require('ejs');
