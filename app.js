@@ -30,7 +30,27 @@ app.use(passport.session());
 
 
 // mongoose configuration
-mongoose.connect('mongodb://localhost:27017/userDB');
+// mongoose.connect('mongodb://vikasbhalla:Vikas@123.com@cluster0.j9vrw.mongodb.net/userDB', { useNewUrlParser: true, useUnifiedTopology: true},
+//   () => {
+//     console.log('Connected to MongoDB');
+//   });
+// setTimeout( async function() {
+//   await mongoose.connect('mongodb://vikasbhalla:Vikas@123.com@cluster0.j9vrw.mongodb.net/userDB');
+// }, 10000);
+
+let options = { useNewUrlParser: true, useUnifiedTopology: true};
+
+const uri = process.env.MONGODB_URI
+mongoose
+  .connect(uri)
+  .then(x => {
+    console.log(
+      `Connected to Mongo! Database name: ""`
+    );
+  })
+  .catch(err => {
+    console.error("Error connecting to mongo", err);
+  });
 // creating pure mongoose Schema
 let userSchema = new mongoose.Schema ({
 	username: String,
@@ -38,6 +58,7 @@ let userSchema = new mongoose.Schema ({
 	googleId: String,
 	secret: String
 });
+// mongoose.set('bufferCommands', false);
 userSchema.plugin(passportLocalMongoose);
 userSchema.plugin(findOrCreate);
 let User = new mongoose.model("User", userSchema);
@@ -90,7 +111,7 @@ app.get('/login', function(req,res){
 app.get('/register', function(req,res){
 	res.render('register');
 });
-app.get('/secrets', function(req, res){
+app.get('/secrets',  function(req, res){
 	// check authentication for this route
 	User.find({"secret":{$ne:null}}, function(err, foundUsers){
 		if(err){
