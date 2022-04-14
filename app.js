@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({
 	extended: true
 }));
 app.use(session({
-  secret: 'This is a test secret.',
+  secret: process.env.SECRET,
   resave: false,
   saveUninitialized: true,
   maxAge: 24*60*60*1000
